@@ -15,8 +15,8 @@ fsm_t fsm;
 
 void setup() {
   Serial.begin(9600);
+	
   led_init();
-
   fsm_init(&fsm);
 
   fsm_state_register(&fsm, ETHER, &eth_s);

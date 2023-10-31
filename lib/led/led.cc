@@ -1,6 +1,5 @@
-#include "led.h"
-
 #include <Arduino.h>
+#include <led.h>
 
 void led_init() {
   pinMode(RPIN, OUTPUT);
@@ -8,8 +7,8 @@ void led_init() {
   pinMode(BPIN, OUTPUT);
 }
 
-void led_set(uint8_t r, uint8_t g, uint8_t b) {
-  analogWrite(RPIN, r);
-  analogWrite(GPIN, g);
-  analogWrite(BPIN, b);
+void led_set(uint8_t red, uint8_t green, uint8_t blue) {
+  analogWrite(RPIN, red);
+  analogWrite(GPIN, green);
+  analogWrite(BPIN, blue);
 }

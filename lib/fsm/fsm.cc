@@ -1,13 +1,12 @@
-#include "fsm.h"
-
 #include <Arduino.h>
+#include <fsm.h>
 
 void fsm_init(fsm_t *fsm) {
   fsm->state = 0;
-  fsm->event = FSM_EVENT_SAVE;
+  fsm->event = -1;
 
-  for (int i = 0; i < FSM_STATES_MAX; i++)
-    for (int j = 0; j < FSM_EVENTS_MAX; j++) fsm->transitions[i][j] = -1;
+  for (int i = 0; i < FSM_STATES; i++)
+    for (int j = 0; j < FSM_EVENTS; j++) fsm->transitions[i][j] = -1;
 }
 
 void fsm_event_supply(fsm_t *fsm, int8_t event) { fsm->event = event; }
@@ -25,17 +24,11 @@ void fsm_exec(fsm_t *fsm, int8_t root) {
   fsm->state = root;
 
   while (1) {
-    Serial.print(fsm->state);
-    Serial.print(" ");
-    Serial.println(fsm->event);
-
     fsm->states[fsm->state]->setup();
 
-    while (fsm->event == FSM_EVENT_SAVE) fsm->states[fsm->state]->action(fsm);
-
-    if (fsm->event == FSM_EVENT_STOP) return;
+    while (fsm->event == -1) fsm->states[fsm->state]->action(fsm);
 
     fsm->state = fsm->transitions[fsm->state][fsm->event];
-    fsm->event = FSM_EVENT_SAVE;
+    fsm->event = -1;
   }
 }

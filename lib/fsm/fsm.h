@@ -1,12 +1,10 @@
 #ifndef FSM_H
 #define FSM_H
 
-#include <stdint.h>
+#define FSM_STATES 3
+#define FSM_EVENTS 2
 
-#define FSM_STATES_MAX 3
-#define FSM_EVENTS_MAX 2
-#define FSM_EVENT_STOP -2
-#define FSM_EVENT_SAVE -1
+#include <stdint.h>
 
 typedef struct fsm fsm_t;
 typedef struct fsm_state fsm_state_t;
@@ -19,8 +17,8 @@ struct fsm_state {
 struct fsm {
   int8_t state;
   int8_t event;
-  struct fsm_state *states[FSM_STATES_MAX];
-  int8_t transitions[FSM_STATES_MAX][FSM_EVENTS_MAX];
+  struct fsm_state *states[FSM_STATES];
+  int8_t transitions[FSM_STATES][FSM_EVENTS];
 };
 
 void fsm_init(fsm_t *fsm);

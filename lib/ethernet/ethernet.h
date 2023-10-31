@@ -1,13 +1,14 @@
 #ifndef ETHERNET_H
 #define ETHERNET_H
 
+#include <Arduino.h>
 #include <Ethernet.h>
-#include <SPI.h>
 #include <fsm.h>
 
 void ethernet_init();
 void ethernet_setup(fsm_t *fsm);
 
-EthernetClient ethClient;
+extern EthernetClient ethClient;
+extern byte mac[];
 
 #endif  // ETHERNET_H
