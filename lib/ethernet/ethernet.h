@@ -1,14 +1,15 @@
 #ifndef ETHERNET_H
 #define ETHERNET_H
 
-#include <Arduino.h>
-#include <Ethernet.h>
 #include <fsm.h>
 
-void ethernet_init();
-void ethernet_setup(fsm_t *fsm);
+class EthernetState : public State {
+ public:
+  void setup();
+  int8_t action();
 
-extern EthernetClient ethClient;
-extern byte mac[];
+ private:
+  uint8_t MAC[6] = {0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED};
+};
 
 #endif  // ETHERNET_H

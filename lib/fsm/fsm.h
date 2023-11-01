@@ -1,31 +1,31 @@
 #ifndef FSM_H
 #define FSM_H
 
-#define FSM_STATES 3
+#define FSM_THROW(event) return event;
+#define FSM_REPEAT() return -1;
+#define FSM_STOP() return -2;
 #define FSM_EVENTS 2
 
 #include <stdint.h>
 
-typedef struct fsm fsm_t;
-typedef struct fsm_state fsm_state_t;
+class State {
+ public:
+  State *next(int8_t event);
+  void addTransition(int8_t event, State *next);
 
-struct fsm_state {
-  void (*setup)();
-  void (*action)(fsm_t *fsm);
+  virtual void setup();
+  virtual int8_t action();
+
+ private:
+  State *transitions[FSM_EVENTS];
 };
 
-struct fsm {
-  int8_t state;
-  int8_t event;
-  struct fsm_state *states[FSM_STATES];
-  int8_t transitions[FSM_STATES][FSM_EVENTS];
-};
+class FSM {
+ public:
+  void run(State *root);
 
-void fsm_init(fsm_t *fsm);
-void fsm_event_supply(fsm_t *fsm, int8_t event);
-void fsm_state_register(fsm_t *fsm, int8_t stateId, fsm_state_t *state);
-void fsm_trans_register(fsm_t *fsm, int8_t source, int8_t event,
-                        int8_t destination);
-void fsm_exec(fsm_t *fsm, int8_t root);
+ private:
+  State *state;
+};
 
 #endif  // FSM_H

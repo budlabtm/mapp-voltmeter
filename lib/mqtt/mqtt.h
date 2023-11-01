@@ -5,13 +5,20 @@
 #define MQTT_USR "hfr-volt-device"
 #define MQTT_PASS "mxlinux"
 
+#include <Ethernet.h>
 #include <MQTT.h>
-#include <ethernet.h>
+#include <fsm.h>
 
-void mqtt_init();
-void mqtt_setup(fsm_t *fsm);
-bool mqtt_publish(const char topic[], int payload);
+class MQTTState : public State {
+ public:
+  void setup();
+  int8_t action();
+  bool publish(const char topic[], int payload);
+	bool connected();
 
-extern MQTTClient mqttClient;
+ private:
+  EthernetClient ethClient;
+  MQTTClient mqttClient;
+};
 
 #endif  // MQTT_H_

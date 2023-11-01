@@ -1,13 +1,17 @@
 #include <Arduino.h>
-#include <fsm.h>
 #include <led.h>
 #include <loop.h>
 #include <mqtt.h>
 
-void loop_init() { led_set(GREEN); }
+LoopState::LoopState(MQTTState *_mqtt) { this->mqtt = _mqtt; }
 
-void loop_action(fsm_t *fsm) {
-  if (!mqtt_publish(TOP1, analogRead(VPIN1)) ||
-      !mqtt_publish(TOP2, analogRead(VPIN2)))
-    fsm_event_supply(fsm, 0);
+void LoopState::setup() { led_set(GREEN); }
+
+int8_t LoopState::action() {
+	if (this->mqtt->connected()) {
+		this->mqtt->publish(TOP1, analogRead(VPIN1));
+		this->mqtt->publish(TOP2, analogRead(VPIN2));
+		FSM_REPEAT();
+	} else
+    FSM_THROW(0);
 }

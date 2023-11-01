@@ -4,28 +4,22 @@
 #include <loop.h>
 #include <mqtt.h>
 
-enum state { ETHER, MQTT, LOOP };
 enum event { FAIL, OK };
 
-fsm_state_t eth_s = {.setup = ethernet_init, .action = ethernet_setup};
-fsm_state_t mqtt_s = {.setup = mqtt_init, .action = mqtt_setup};
-fsm_state_t loop_s = {.setup = loop_init, .action = loop_action};
+FSM fsm;
 
-fsm_t fsm;
+EthernetState ethernet_s;
+MQTTState mqtt_s;
+LoopState loop_s{&mqtt_s};
 
 void setup() {
   Serial.begin(9600);
-	
   led_init();
-  fsm_init(&fsm);
 
-  fsm_state_register(&fsm, ETHER, &eth_s);
-  fsm_state_register(&fsm, MQTT, &mqtt_s);
-  fsm_state_register(&fsm, LOOP, &loop_s);
-
-  fsm_trans_register(&fsm, ETHER, OK, MQTT);
-  fsm_trans_register(&fsm, MQTT, OK, LOOP);
-  fsm_trans_register(&fsm, LOOP, FAIL, MQTT);
+  ethernet_s.addTransition(OK, &mqtt_s);
+  mqtt_s.addTransition(OK, &loop_s);
+	mqtt_s.addTransition(FAIL, &ethernet_s);
+  loop_s.addTransition(FAIL, &mqtt_s);
 }
 
-void loop() { fsm_exec(&fsm, ETHER); }
+void loop() { fsm.run(&ethernet_s); }

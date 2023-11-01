@@ -1,25 +1,20 @@
-#include <Arduino.h>
-#include <ethernet.h>
-#include <fsm.h>
 #include <led.h>
 #include <mqtt.h>
 
-void mqtt_init() {
+void MQTTState::setup() {
   led_set(BLUE);
-  mqttClient.begin(MQTT_HOST, ethClient);
+  this->mqttClient.begin(MQTT_HOST, this->ethClient);
 }
 
-void mqtt_setup(fsm_t *fsm) {
-  while (!mqttClient.connect(MQTT_USR, MQTT_USR, MQTT_PASS)) {
-    Serial.println("MQTT try...");
-		delay(1000);
-	}
-
-  fsm_event_supply(fsm, 1);
+int8_t MQTTState::action() {
+  if (this->mqttClient.connect(MQTT_USR, MQTT_USR, MQTT_PASS)) {
+    FSM_THROW(1);
+  } else
+    FSM_REPEAT();
 }
 
-bool mqtt_publish(const char topic[], int payload) {
-  return mqttClient.publish(topic, String(payload));
+bool MQTTState::publish(const char topic[], int payload) {
+  return this->mqttClient.publish(topic, String(payload));
 }
 
-MQTTClient mqttClient;
+bool MQTTState::connected() { return this->mqttClient.connected(); }
