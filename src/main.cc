@@ -6,10 +6,12 @@
 
 enum event { FAIL, OK };
 
-FSM fsm;
+credentials creds = {
+    .host = "localhost", .username = "username", .password = "password"};
 
+FSM fsm;
 EthernetState ethernet_s;
-MQTTState mqtt_s;
+MQTTState mqtt_s{&creds};
 LoopState loop_s{&mqtt_s};
 
 void setup() {
@@ -18,7 +20,7 @@ void setup() {
 
   ethernet_s.addTransition(OK, &mqtt_s);
   mqtt_s.addTransition(OK, &loop_s);
-	mqtt_s.addTransition(FAIL, &ethernet_s);
+  mqtt_s.addTransition(FAIL, &ethernet_s);
   loop_s.addTransition(FAIL, &mqtt_s);
 }
 

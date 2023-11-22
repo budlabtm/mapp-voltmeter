@@ -8,6 +8,7 @@ void EthernetState::setup() { led_set(RED); }
 int8_t EthernetState::action() {
   if (Ethernet.begin(this->MAC)) {
     FSM_THROW(1);
-  } else
+  } else {
     FSM_REPEAT();
+  }
 }

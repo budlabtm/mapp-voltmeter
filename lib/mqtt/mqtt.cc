@@ -1,13 +1,16 @@
 #include <led.h>
 #include <mqtt.h>
 
+MQTTState::MQTTState(credentials *creds) : creds(creds) {}
+
 void MQTTState::setup() {
   led_set(BLUE);
-  this->mqttClient.begin(MQTT_HOST, this->ethClient);
+  this->mqttClient.begin(creds->host, this->ethClient);
 }
 
 int8_t MQTTState::action() {
-  if (this->mqttClient.connect(MQTT_USR, MQTT_USR, MQTT_PASS)) {
+  if (this->mqttClient.connect(creds->username, creds->username,
+                               creds->password)) {
     FSM_THROW(1);
   } else
     FSM_REPEAT();

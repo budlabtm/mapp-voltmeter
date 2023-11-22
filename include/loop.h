@@ -1,8 +1,8 @@
 #ifndef LOOP_H
 #define LOOP_H
 
-#define TOP1 "/test/a0"
-#define TOP2 "/test/a1"
+#define TOP1 "/lab/hfr/volt/c0"
+#define TOP2 "/lab/hfr/volt/c1"
 #define VPIN1 A0
 #define VPIN2 A1
 
